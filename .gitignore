@@ -1,0 +1,9 @@
+acs/
+*.err
+*.o
+*.pk3
+*.pk7
+*.7z
+*.zip
+desktop.ini
+
