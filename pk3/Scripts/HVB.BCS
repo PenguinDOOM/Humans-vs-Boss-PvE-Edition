@@ -1,0 +1,103 @@
+//developing 2021/11/23~
+
+#library "HVB"
+#include "zcommon.h"
+
+#define PLAYERTID 5000 //+PlayerNumber
+
+str NormalBossesName[NormalBossesCount];
+str PowerfulBossesName[PowerfulBossesCount];
+
+Void HVBNotification (str strings1, fixed holdTime, fixed x, fixed y) //original 800*600
+{
+	int Width = GetCVar("vid_defwidth");
+	int Height = GetCVar("vid_defheight");
+	
+	SetHudSize(Width, Height, 1);
+	
+	fixed FixedWidth = (fixed)Width * x;
+	fixed FixedHeight = (fixed)Height * y;
+	
+	SetFont("BIGFONT");
+	Hudmessage(s:strings1;HUDMSG_PLAIN, 2, CR_Red, FixedWidth, FixedHeight, holdTime, 1);
+}
+
+Script "HVB_PlayerTID" (void) Enter
+{
+	Thing_ChangeTID(0, PLAYERTID + PlayerNumber());
+}
+
+Script "HVB_PlayerSelection" (int type, int arg1, int arg2) EVENT
+{
+	if(type == GAMEEVENT_ROUND_STARTS)
+	{
+		int boss_player;
+		int maxplayernumber;
+		
+		SetPlayerProperty(1, 1, PROP_TOTALLYFROZEN);
+		
+		for(let int i = 0; i < 64; i++)
+		{
+			if(!PlayerInGame(i))
+				continue;
+			
+			maxplayernumber = i + 1;
+		}
+		
+		do
+		{
+			boss_player = random(0, maxplayernumber);
+			PrintBold(s:"Boss ", d:boss_player);
+		}
+		while(PlayerInGame(boss_player) == False);
+		
+		//PrintBold(s:"Boss ", d:boss_player);
+		
+		for(let int i = 0; i < maxplayernumber; i++)
+		{
+			if(!PlayerInGame(i) || i != boss_player)
+				continue;
+			
+			SetActivatorToPlayer(i);
+			//NamedExecuteClientScript("YouAreBOSS", i, 0, 0, 0, 0);
+			ACS_NamedExecuteAlways("HVB_YouAreBOSS", 0, 0, 0, 0);
+			Player_SetTeam(1, True);
+		}
+		
+		Delay(1);
+		
+		for(let int i = 0; i < maxplayernumber; i++)
+		{
+			if(!PlayerInGame(i) || i == boss_player)
+				continue;
+			
+			SetActivatorToPlayer(i);
+			Player_SetTeam(0, True);
+		}
+		
+		SetActivator(0, AAPTR_NULL);
+		
+		ACS_NamedExecuteAlways("HVB_BossSelection", 0, boss_player, 0, 0);
+		
+		Delay(35 * 5);
+		
+		SetPlayerProperty(1, 0, PROP_TOTALLYFROZEN);
+	}
+}
+
+Script "HVB_YouAreBOSS" (void) CLIENTSIDE
+{
+	HVBNotification("You are BOSS", 5.0, 0.5, 0.5);
+}
+
+Script "HVB_BossSelection" (int boss_player)
+{
+	HVBNotification("Selecting Boss...", 5.0, 0.5, 0.25);
+	
+	SetActivatorToPlayer(boss_player);
+	MorphActor(ActivatorTID(), NormalBossesName[], "", 0x7FFFFFFE, MRF_FULLHEALTH || MRF_WHENINVULNERABLE || MRF_LOSEACTUALWEAPON || MRF_NEWTIDBEHAVIOUR, "", "");
+	
+	MorphActor(ActivatorTID(), PowerfulBossesName[], "", 0x7FFFFFFE, MRF_FULLHEALTH || MRF_WHENINVULNERABLE || MRF_LOSEACTUALWEAPON || MRF_NEWTIDBEHAVIOUR, "", "");
+	
+}
+
