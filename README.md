@@ -1,12 +1,14 @@
-# Project Name
-Information about the project
+# Humans vs Boss
+Humans vs Boss for Zandronum
 
 ## How to build the pk3?
-Add info
+None
 
 ## Where can I play this?
-Add info
+Not yet
 
 ## Credits
 
-Insert credits here
+- Penguin (ACS and Edit)
+- Realms 667 (Sprites, sounds, and decorate)
+
