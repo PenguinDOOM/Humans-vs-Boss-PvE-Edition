@@ -5,8 +5,8 @@
 
 #define PLAYERTID 5000 //+PlayerNumber
 
-str NormalBossesName[NormalBossesCount];
-str PowerfulBossesName[PowerfulBossesCount];
+//str NormalBossesName[NormalBossesCount];
+//str PowerfulBossesName[PowerfulBossesCount];
 
 Void HVBNotification (str strings1, fixed holdTime, fixed x, fixed y) //original 800*600
 {
@@ -51,20 +51,31 @@ Script "HVB_PlayerSelection" (int type, int arg1, int arg2) EVENT
 		}
 		while(PlayerInGame(boss_player) == False);
 		
+		Delay(35 * 5);
+		
 		//PrintBold(s:"Boss ", d:boss_player);
 		
 		for(let int i = 0; i < maxplayernumber; i++)
 		{
-			if(!PlayerInGame(i) || i != boss_player)
+			if(!PlayerInGame(i))
+			{
 				continue;
-			
-			SetActivatorToPlayer(i);
-			//NamedExecuteClientScript("YouAreBOSS", i, 0, 0, 0, 0);
-			ACS_NamedExecuteAlways("HVB_YouAreBOSS", 0, 0, 0, 0);
-			Player_SetTeam(1, True);
+			}
+			else if(i == boss_player)
+			{
+				SetActivatorToPlayer(i);
+				//NamedExecuteClientScript("YouAreBOSS", i, 0, 0, 0, 0);
+				ACS_NamedExecuteAlways("HVB_YouAreBOSS", 0, 0, 0, 0);
+				Player_SetTeam(1, True);
+			}
+			else if(i != boss_player)
+			{
+				SetActivatorToPlayer(i);
+				Player_SetTeam(0, True);
+				}
 		}
 		
-		Delay(1);
+		/*Delay(1);
 		
 		for(let int i = 0; i < maxplayernumber; i++)
 		{
@@ -73,11 +84,11 @@ Script "HVB_PlayerSelection" (int type, int arg1, int arg2) EVENT
 			
 			SetActivatorToPlayer(i);
 			Player_SetTeam(0, True);
-		}
+		}*/
 		
 		SetActivator(0, AAPTR_NULL);
 		
-		ACS_NamedExecuteAlways("HVB_BossSelection", 0, boss_player, 0, 0);
+		//ACS_NamedExecuteAlways("HVB_BossSelection", 0, boss_player, 0, 0);
 		
 		Delay(35 * 5);
 		
@@ -90,7 +101,7 @@ Script "HVB_YouAreBOSS" (void) CLIENTSIDE
 	HVBNotification("You are BOSS", 5.0, 0.5, 0.5);
 }
 
-Script "HVB_BossSelection" (int boss_player)
+/*Script "HVB_BossSelection" (int boss_player)
 {
 	HVBNotification("Selecting Boss...", 5.0, 0.5, 0.25);
 	
@@ -99,5 +110,5 @@ Script "HVB_BossSelection" (int boss_player)
 	
 	MorphActor(ActivatorTID(), PowerfulBossesName[], "", 0x7FFFFFFE, MRF_FULLHEALTH || MRF_WHENINVULNERABLE || MRF_LOSEACTUALWEAPON || MRF_NEWTIDBEHAVIOUR, "", "");
 	
-}
+}*/
 
