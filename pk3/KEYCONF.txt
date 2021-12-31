@@ -1,0 +1,6 @@
+addslotdefault 1 "AfritArm"
+
+addkeysection "Humans vs Boss Key Bind" HVBBind
+
+addmenukey "Open Menu" Open_HVBMenu
+alias Open_HVBMenu "pukename HVB_Menu_Open"

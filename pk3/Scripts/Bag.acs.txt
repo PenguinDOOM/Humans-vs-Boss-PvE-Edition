@@ -1,0 +1,65 @@
+Script "HVB_Menu_Bag" CLIENTSIDE
+{
+	bool Menu_Login = False;
+	bool Menu_Time = False;
+	bool Menu_Level = False;
+	
+	
+	int MenuPage = 1;
+	
+	int Width = 1024;
+	int Height = 768;
+	
+	fixed FixedWidth = (fixed)Width * 0.5;
+	fixed FixedHeight = (fixed)Height * 0.5;
+	
+	CreateBox(0, 308.0, 315.0, 250.0, 46.0);
+	CreateBox(1, 671.0, 315.0, 250.0, 46.0);
+	
+	CreateBox(2, 308.0, 407.0, 250.0, 46.0);
+	CreateBox(3, 671.0, 407.0, 250.0, 46.0);
+	
+	CreateBox(4, 308.0, 499.0, 250.0, 46.0);
+	CreateBox(5, 671.0, 499.0, 250.0, 46.0);
+	
+	RectsDelete(6);
+	RectsDelete(7);
+	
+	HudDrawText(206, "");
+	HudDrawText(207, "");
+	
+	SetCursorArea(1024.0, 768.0);
+	
+	bool Menu_Bag = True;
+	
+	while(MenuOpen)
+	{
+		HudResetState();
+		HudSetVirtualSize(1024.0, 768.0);
+		HudSetScale(3.0);
+		
+		if(KeyPressed(BT_ALTATTACK))
+		{
+			if(Menu_Item)
+			{
+				Menu_Item = False;
+			}
+			else if(Menu_Resource)
+			{
+				Menu_Resource = False;
+			}
+			else if(Menu_Important)
+			{
+				Menu_Important = False;
+			}
+			else
+			{
+				RectsDelete(-1);
+				for(let int i = 200; i <= 220;i++)
+				{
+					HudDrawText(i, "");
+				}
+				ACS_NamedExecute("HVB_Menu_Main", 0, 0, 0, 0);
+				terminate;
+			}
+		}

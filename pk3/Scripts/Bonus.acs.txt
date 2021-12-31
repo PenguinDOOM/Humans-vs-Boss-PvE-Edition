@@ -1,0 +1,758 @@
+Script "HVB_Menu_Bonus" CLIENTSIDE
+{
+	bool Menu_Login = False;
+	bool Menu_Time = False;
+	bool Menu_Level = False;
+	
+	
+	int MenuPage = 1;
+	
+	int Width = 1024;
+	int Height = 768;
+	
+	fixed FixedWidth = (fixed)Width * 0.5;
+	fixed FixedHeight = (fixed)Height * 0.5;
+	
+	CreateBox(0, 308.0, 315.0, 250.0, 46.0);
+	CreateBox(1, 671.0, 315.0, 250.0, 46.0);
+	
+	CreateBox(2, 308.0, 407.0, 250.0, 46.0);
+	CreateBox(3, 671.0, 407.0, 250.0, 46.0);
+	
+	CreateBox(4, 308.0, 499.0, 250.0, 46.0);
+	CreateBox(5, 671.0, 499.0, 250.0, 46.0);
+	
+	RectsDelete(6);
+	RectsDelete(7);
+	
+	HudDrawText(206, "");
+	HudDrawText(207, "");
+	
+	SetCursorArea(1024.0, 768.0);
+	
+	bool Menu_Bonus = True;
+	
+	while(MenuOpen)
+	{
+		HudResetState();
+		HudSetVirtualSize(1024.0, 768.0);
+		HudSetScale(3.0);
+		
+		if(KeyPressed(BT_ALTATTACK))
+		{
+			if(Menu_Login)
+			{
+				Menu_Login = False;
+			}
+			else if(Menu_Time)
+			{
+				Menu_Time = False;
+			}
+			else if(Menu_Level)
+			{
+				Menu_Level = False;
+			}
+			else
+			{
+				RectsDelete(-1);
+				for(let int i = 200; i <= 220;i++)
+				{
+					HudDrawText(i, "");
+				}
+				ACS_NamedExecute("HVB_Menu_Main", 0, 0, 0, 0);
+				terminate;
+			}
+		}
+		else if(RectIsClicked(0, BT_ATTACK))
+		{
+			CreateBox(8, 308.0, 499.0, 250.0, 46.0);
+			Menu_Login = True;
+		}
+		else if(RectIsClicked(1, BT_ATTACK))
+		{
+			Menu_Time = True;
+		}
+		else if(RectIsClicked(2, BT_ATTACK))
+		{
+			Menu_Level = True;
+		}
+		else if(RectIsClicked(6, BT_ATTACK))
+		{
+			MenuPage -= 1;
+		}
+		else if(RectIsClicked(7, BT_ATTACK))
+		{
+			MenuPage += 1;
+		}
+		else if(RectIsClicked(7, BT_ATTACK))
+		{
+			ACS_NamedExecute("HVB_ReceiveLoginClient", 0, 0, 0, 0);
+		}
+		
+		
+		if(Menu_Bonus)
+		{
+			HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+			if(RectIsHovered(0))
+				HudDrawText(200, "\c[Z3]Login Reward");
+			else
+				HudDrawText(200, "\cdLogin Reward");
+			HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+			if(RectIsHovered(1))
+				HudDrawText(201, "\c[Z3]Time Reward");
+			else
+				HudDrawText(201, "\cdTime Reward");
+					
+			HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+			if(RectIsHovered(2))
+				HudDrawText(202, "\c[Z3]Level Reward");
+			else
+				HudDrawText(202, "\cdLevel Reward");
+					
+			HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+			HudDrawText(203, "\cdWip");
+					
+			HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+			HudDrawText(204, "\cdWip");
+					
+			HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+			HudDrawText(205, "\cdWip");
+		}
+		else if(Menu_Login)
+		{
+			if(!GotLogin)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdGet");
+			}
+			else
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				HudDrawText(202, "\cdAlready got");
+			}
+		}
+		else if(Menu_Time)
+		{
+			if(PlayTime < 1800)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				HudDrawText(202, "\cdNot qualified");
+			}
+			else if(PlayTime >= 1800 && !CheckInventory("Got30MinReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd30Min Reword");
+			}
+			else if(PlayTime >= 3600 && !CheckInventory("Got1HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd1Hour Reword");
+			}
+			else if(PlayTime >= 7200 && !CheckInventory("Got2HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\c[Z3]1\c[Q8]Hour Reword");
+			}
+			else if(PlayTime >= 10800 && !CheckInventory("Got3HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd1Hour Reword");
+			}
+			else if(PlayTime >= 14400 && !CheckInventory("Got4HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd4Hours Reword");
+			}
+			else if(PlayTime >= 18000 && !CheckInventory("Got5HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd5Hours Reword");
+			}
+			else if(PlayTime >= 21600 && !CheckInventory("Got6HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd6Hours Reword");
+			}
+			else if(PlayTime >= 25200 && !CheckInventory("Got7HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd7Hours Reword");
+			}
+			else if(PlayTime >= 28800 && !CheckInventory("Got8HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd8Hours Reword");
+			}
+			else if(PlayTime >= 32400 && !CheckInventory("Got9HReword"))
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cd9Hours Reword");
+			}
+			else
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				HudDrawText(202, "\cdAlready got");
+			}
+		}
+		else if(Menu_Level)
+		{
+			if(!CheckInventory("GotLevelReword10") && CheckInventory("LevelItem") >= 10)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel10 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword20") && CheckInventory("LevelItem") >= 20)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel20 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword30") && CheckInventory("LevelItem") >= 30)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel30 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword40") && CheckInventory("LevelItem") >= 40)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel40 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword50") && CheckInventory("LevelItem") >= 50)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel50 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword60") && CheckInventory("LevelItem") >= 60)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel60 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword70") && CheckInventory("LevelItem") >= 70)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel70 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword80") && CheckInventory("LevelItem") >= 80)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel80 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword90") && CheckInventory("LevelItem") >= 90)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel90 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword100") && CheckInventory("LevelItem") >= 100)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel100 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword150") && CheckInventory("LevelItem") >= 150)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel150 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword200") && CheckInventory("LevelItem") >= 200)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel200 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword250") && CheckInventory("LevelItem") >= 250)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel250 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword300") && CheckInventory("LevelItem") >= 300)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel300 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword350") && CheckInventory("LevelItem") >= 350)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel350 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword400") && CheckInventory("LevelItem") >= 400)
+			{
+				HudSetPoint(TextBoxX[8][BOX_X], TextBoxY[8][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel400 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword500") && CheckInventory("LevelItem") >= 500)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel500 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword600") && CheckInventory("LevelItem") >= 600)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel600 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword700") && CheckInventory("LevelItem") >= 700)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel700 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword800") && CheckInventory("LevelItem") >= 800)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel800 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword900") && CheckInventory("LevelItem") >= 900)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel900 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword1000") && CheckInventory("LevelItem") >= 1000)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel1000 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword1200") && CheckInventory("LevelItem") >= 1200)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel1200 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword1400") && CheckInventory("LevelItem") >= 1400)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLeve1400 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword1600") && CheckInventory("LevelItem") >= 1600)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel1600 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword1800") && CheckInventory("LevelItem") >= 1800)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel1800 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword2000") && CheckInventory("LevelItem") >= 2000)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel2000 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword2500") && CheckInventory("LevelItem") >= 2500)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel2500 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword3000") && CheckInventory("LevelItem") >= 3000)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel3000 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword3500") && CheckInventory("LevelItem") >= 3500)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel3500 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword4000") && CheckInventory("LevelItem") >= 4000)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel4000 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword4500") && CheckInventory("LevelItem") >= 4500)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel4500 Reword");
+			}
+			else if(!CheckInventory("GotLevelReword5000") && CheckInventory("LevelItem") >= 5000)
+			{
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Get");
+				else
+					HudDrawText(202, "\cdLevel5000 Reword");
+			}
+			else
+			{
+				HudDrawText(202, "\cdNot available");
+			}
+		}
+		Delay(1);
+	}
+	
+	RectsDelete(-1);
+	for(let int i = 200; i <= 220;i++)
+	{
+		HudDrawText(i, "");
+	}
+	MenuOpen = False;
+	//ACS_NamedExecute("HVB_Menu_Main", 0, 0, 0, 0);
+	
+}
+/*
+Script "HVB_SyncLoginToday" CLIENTSIDE
+{
+	GotLoginToday = True;
+}
+
+Script "HVB_ReceiveLoginServer" NET
+{
+	if(GotLoginToday)
+		terminate;
+	//GiveInventory
+	NamedExecuteClientScript("HVB_SyncLoginToday", PlayerNumber(), 0, 0, 0, 0);
+	GotLoginToday = True;
+}
+
+Script "HVB_ReceiveLoginClient" CLIENTSIDE
+{
+	while(!GotLoginToday)
+	{
+		NamedRequestScriptPuke("HVB_ReceiveLoginServer", 0, 0, 0, 0);
+		Delay(10);
+	}
+}
+
+Script "HVB_PlayTimeLogger"
+{
+	int PN = PlayerNumber();
+	while(True)
+	{
+		switch(PlayTime[PN])
+		{
+			case: 1800
+				30MinReword = True;
+				break;
+			case: 3600
+				1HReword = True;
+				break;
+			case: 7200
+				2HReword = True;
+				break;
+			case: 10800
+				3HReword = True;
+				break;
+			case: 14400
+				4HReword = True;
+				break;
+			case: 18000
+				5HReword = True;
+				break;
+			case: 21600
+				6HReword = True;
+				break;
+			case: 25200
+				7HReword = True;
+				break;
+			case: 28800
+				8HReword = True;
+				break;
+			case: 32400
+				9HReword = True;
+				break;
+			default:
+				break;
+		}
+		Delay(35);
+		PlayTime[PN]++;
+	}
+}
+
+Script "HVB_SyncPlayTime" (int arg1, int arg2) CLIENTSIDE
+{
+	PlayTime[arg2] = arg1;
+}
+
+Script "HVB_ReceiveTimeServer" NET
+{
+	NamedExecuteClientScript("HVB_SyncPlayTime", PlayerNumber(), 0, PlayTime[PlayerNumber()], PlayerNumber(), 0);
+}
+
+Script "HVB_ReceiveTimeClient" CLIENTSIDE
+{
+	NamedRequestScriptPuke("HVB_GetTimeServer", 0, 0, 0, 0);
+}
+
+Script "HVB_SyncGotLevelReword" (int arg1, int arg2) CLIENTSIDE
+{
+	GotLevelReword[arg2] = arg1;
+}
+
+Script "HVB_ReceiveLevelServer" NET
+{
+	if(!CheckInventory("GotLevelReword10") && CheckInventory("LevelItem") >= 10)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword10")
+	}
+	else if(!CheckInventory("GotLevelReword20") && CheckInventory("LevelItem") >= 20)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword20")
+	}
+	else if(!CheckInventory("GotLevelReword30") && CheckInventory("LevelItem") >= 30)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword30")
+	}
+	else if(!CheckInventory("GotLevelReword40") && CheckInventory("LevelItem") >= 40)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword40")
+	}
+	else if(!CheckInventory("GotLevelReword50") && CheckInventory("LevelItem") >= 50)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword50")
+	}
+	else if(!CheckInventory("GotLevelReword60") && CheckInventory("LevelItem") >= 60)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword60")
+	}
+	else if(!CheckInventory("GotLevelReword70") && CheckInventory("LevelItem") >= 70)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword70")
+	}
+	else if(!CheckInventory("GotLevelReword80") && CheckInventory("LevelItem") >= 80)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword80")
+	}
+	else if(!CheckInventory("GotLevelReword90") && CheckInventory("LevelItem") >= 90)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword90")
+	}
+	else if(!CheckInventory("GotLevelReword100") && CheckInventory("LevelItem") >= 100)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword100")
+	}
+	else if(!CheckInventory("GotLevelReword150") && CheckInventory("LevelItem") >= 150)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword150")
+	}
+	else if(!CheckInventory("GotLevelReword200") && CheckInventory("LevelItem") >= 200)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword200")
+	}
+	else if(!CheckInventory("GotLevelReword250") && CheckInventory("LevelItem") >= 250)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword250")
+	}
+	else if(!CheckInventory("GotLevelReword300") && CheckInventory("LevelItem") >= 300)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword300")
+	}
+	else if(!CheckInventory("GotLevelReword350") && CheckInventory("LevelItem") >= 350)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword350")
+	}
+	else if(!CheckInventory("GotLevelReword400") && CheckInventory("LevelItem") >= 400)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword400")
+	}
+	else if(!CheckInventory("GotLevelReword500") && CheckInventory("LevelItem") >= 500)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword500")
+	}
+	else if(!CheckInventory("GotLevelReword600") && CheckInventory("LevelItem") >= 600)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword600")
+	}
+	else if(!CheckInventory("GotLevelReword700") && CheckInventory("LevelItem") >= 700)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword700")
+	}
+	else if(!CheckInventory("GotLevelReword800") && CheckInventory("LevelItem") >= 800)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword800")
+	}
+	else if(!CheckInventory("GotLevelReword900") && CheckInventory("LevelItem") >= 900)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword900")
+	}
+	else if(!CheckInventory("GotLevelReword1000") && CheckInventory("LevelItem") >= 1000)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword1000")
+	}
+	else if(!CheckInventory("GotLevelReword1200") && CheckInventory("LevelItem") >= 1200)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword1200")
+	}
+	else if(!CheckInventory("GotLevelReword1400") && CheckInventory("LevelItem") >= 1400)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword1400")
+	}
+	else if(!CheckInventory("GotLevelReword1600") && CheckInventory("LevelItem") >= 1600)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword1600")
+	}
+	else if(!CheckInventory("GotLevelReword1800") && CheckInventory("LevelItem") >= 1800)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword1800")
+	}
+	else if(!CheckInventory("GotLevelReword2000") && CheckInventory("LevelItem") >= 2000)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword2000")
+	}
+	else if(!CheckInventory("GotLevelReword2500") && CheckInventory("LevelItem") >= 2500)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword2500")
+	}
+	else if(!CheckInventory("GotLevelReword3000") && CheckInventory("LevelItem") >= 3000)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword3000")
+	}
+	else if(!CheckInventory("GotLevelReword3500") && CheckInventory("LevelItem") >= 3500)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword3500")
+	}
+	else if(!CheckInventory("GotLevelReword4000") && CheckInventory("LevelItem") >= 4000)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword4000")
+	}
+	else if(!CheckInventory("GotLevelReword4500") && CheckInventory("LevelItem") >= 4500)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword4500")
+	}
+	else if(!CheckInventory("GotLevelReword5000") && CheckInventory("LevelItem") >= 5000)
+	{
+		GiveInventory
+		GiveInventory("GotLevelReword5000")
+	}
+}
+
+Script "HVB_ReceiveLevelClient" () CLIENTSIDE
+{
+	NamedRequestScriptPuke("HVB_GetLevelServer", 0, 0, 0, 0);
+}*/
+

@@ -1,0 +1,2 @@
+#include "decorate/Class/Boss/BossBase.dec"
+#include "decorate/Class/Boss/Normal/Afrit.dec"

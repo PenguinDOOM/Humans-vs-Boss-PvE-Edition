@@ -1,0 +1,164 @@
+Script "HVB_Menu_Loadout" CLIENTSIDE
+{
+	bool Menu_Auto = False;
+	bool Menu_Normal = False;
+	bool Menu_Melee = False;
+	bool Menu_Special = False;
+	bool Menu_Legendary = False;
+	bool Menu_Artifact = False;
+	
+	int MenuPage = 1;
+	
+	int Width = 1024;
+	int Height = 768;
+	
+	fixed FixedWidth = (fixed)Width * 0.5;
+	fixed FixedHeight = (fixed)Height * 0.5;
+	
+	CreateBox(0, 308.0, 315.0, 250.0, 46.0);
+	CreateBox(1, 671.0, 315.0, 250.0, 46.0);
+	
+	CreateBox(2, 308.0, 407.0, 250.0, 46.0);
+	CreateBox(3, 671.0, 407.0, 250.0, 46.0);
+	
+	CreateBox(4, 308.0, 499.0, 250.0, 46.0);
+	CreateBox(5, 671.0, 499.0, 250.0, 46.0);
+	
+	RectsDelete(6);
+	RectsDelete(7);
+	
+	HudDrawText(206, "");
+	HudDrawText(207, "");
+	
+	SetCursorArea(1024.0, 768.0);
+	
+	bool Menu_Loadout = True;
+	
+	while(MenuOpen)
+	{
+		HudResetState();
+		HudSetVirtualSize(1024.0, 768.0);
+		HudSetScale(3.0);
+		if(KeyPressed(BT_ALTATTACK))
+		{
+			if(Menu_Login)
+			{
+				Menu_Login = False;
+			}
+			else if(Menu_Time)
+			{
+				Menu_Time = False;
+			}
+			else if(Menu_Level)
+			{
+				Menu_Level = False;
+			}
+			else
+			{
+				RectsDelete(-1);
+				for(let int i = 200; i <= 220;i++)
+				{
+					HudDrawText(i, "");
+				}
+				ACS_NamedExecute("HVB_Menu_Main", 0, 0, 0, 0);
+				terminate;
+			}
+		}
+		else if(RectIsClicked(0, BT_ATTACK))
+		{
+			CreateBox(8, 308.0, 499.0, 250.0, 46.0);
+			Menu_Login = True;
+		}
+		else if(RectIsClicked(1, BT_ATTACK))
+		{
+			Menu_Time = True;
+		}
+		else if(RectIsClicked(2, BT_ATTACK))
+		{
+			Menu_Level = True;
+		}
+		else if(RectIsClicked(6, BT_ATTACK))
+		{
+			MenuPage -= 1;
+		}
+		else if(RectIsClicked(7, BT_ATTACK))
+		{
+			MenuPage += 1;
+		}
+		else if(RectIsClicked(7, BT_ATTACK))
+		{
+			ACS_NamedExecute("HVB_ReceiveLoginClient", 0, 0, 0, 0);
+		}
+		if(Menu_LoadOut)
+		{
+			HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+			if(RectIsHovered(0))
+				HudDrawText(200, "\c[Z3]Auto Select");
+			else
+				HudDrawText(200, "\cdAuto Select");
+				
+			HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+			if(RectIsHovered(1))
+				HudDrawText(201, "\c[Z3]Character");
+			else
+				HudDrawText(201, "\cdCharacter");
+			
+			HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+			if(RectIsHovered(2))
+				HudDrawText(202, "\c[Z3]Normal Weapons");
+			else
+				HudDrawText(202, "\cdNormal Weapons");
+			
+			HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+			if(RectIsHovered(3))
+				HudDrawText(203, "\c[Z3]Special Weapons");
+			else
+				HudDrawText(203, "\cdSpecial Weapons");
+			
+			HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+			if(RectIsHovered(4))
+				HudDrawText(204, "\c[Z3]Legendary Weapons");
+			else
+				HudDrawText(204, "\cdLegendary Weapons");
+			
+			HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+			if(RectIsHovered(5))
+				HudDrawText(205, "\c[Z3]Artifact");
+			else
+				HudDrawText(205, "\cdArtifact");
+		}
+		
+		if(Menu_AutoSelect)
+		{
+			HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+			if(RectIsHovered(0))
+				HudDrawText(200, "\c[Z3]Character");
+			else
+				HudDrawText(200, "\cdCharacter");
+				
+			HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+			if(RectIsHovered(1))
+				HudDrawText(201, "\c[Z3]Primary Weapons");
+			else
+				HudDrawText(201, "\cdPrimary Weapons");
+			
+			HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+			if(RectIsHovered(2))
+				HudDrawText(202, "\c[Z3]Secondary Weapons");
+			else
+				HudDrawText(202, "\cdSecondary Weapons");
+			
+			HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+			if(RectIsHovered(3))
+				HudDrawText(203, "\c[Z3]Melee Weapons");
+			else
+				HudDrawText(203, "\cdMelee Weapons");
+			
+			HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+			HudDrawText(204, "");
+			
+			HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+			HudDrawText(205, "");
+		}
+	}
+}

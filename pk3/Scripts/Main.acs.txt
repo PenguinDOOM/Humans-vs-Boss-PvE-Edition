@@ -1,0 +1,466 @@
+#define BOX_X 0
+#define BOX_Y 1
+
+#define MENU_MAIN 		-1
+#define MENU_BONUS 		0
+#define MENU_LOADOUT 	1
+#define MENU_BAG 		2
+#define MENU_SKILL 		3
+#define MENU_SHOP 		4
+#define MENU_UPGRADE 	5
+
+int TextBoxX[ACSUTILS_RECTLIB_SAVEDSTATES][2];
+int TextBoxY[ACSUTILS_RECTLIB_SAVEDSTATES][2];
+
+bool GotLogin = False;
+
+int CreateBox(int id, int x, int y, int w, int h)
+{
+	RectCreate(id, x, y, w, h);
+	TextBoxX[id][BOX_X] = x + (w / 2);
+	TextBoxY[id][BOX_Y] = y + (h / 2);
+	return id;
+}
+
+Script "HVB_Menu_Open" (void) NET CLIENTSIDE
+{
+	if(MenuOpen)
+		terminate;
+	
+	ACS_NamedExecute("HVB_Menu_BG", 0, 0, 0, 0);
+	ACS_NamedExecute("HVB_Menu_Cursor", 0, 0, 0, 0);
+	ACS_NamedExecute("HVB_Menu_Main", 0, 0, 0, 0);
+}
+
+Script "HVB_Menu_BG" CLIENTSIDE
+{
+	int Width = 1024;
+	int Height = 768;
+	
+	fixed FixedWidth = (fixed)Width * 0.5;
+	fixed FixedHeight = (fixed)Height * 0.5;
+	
+	while(MenuOpen)
+	{	
+		HudResetState();
+		HudSetVirtualSize(1024.0, 768.0);
+		HudSetPoint(FixedWidth, FixedHeight);
+		HudDrawImage(1999, "BG");
+		HudSetPoint(100.0, 100.0);//(512.0, 384.0);
+		HudDrawImage(1998, "ImageBG");
+		Delay(1);
+	}
+	HudDrawImage(1999, "");
+	HudDrawImage(1998, "");
+}
+
+Script "HVB_Menu_Cursor" CLIENTSIDE
+{
+	SetCursorArea(1024.0, 768.0);
+	while(MenuOpen)
+	{	
+		UpdateCursor();
+		HudSetScale(2.5);
+		HudSetPoint(CursorX(), CursorY());
+		HudDrawImage(100, "CURSOR");
+		Delay(1);
+	}
+	HudDrawImage(100, "");
+}
+
+
+Script "HVB_Menu_Main" (void) CLIENTSIDE
+{
+		
+	int MenuPage = 1;
+	
+	int Width = 1024;
+	int Height = 768;
+	
+	fixed FixedWidth = (fixed)Width * 0.5;
+	fixed FixedHeight = (fixed)Height * 0.5;
+	
+	
+	CreateBox(0, 308.0, 315.0, 250.0, 46.0);
+	CreateBox(1, 671.0, 315.0, 250.0, 46.0);
+	
+	CreateBox(2, 308.0, 407.0, 250.0, 46.0);
+	CreateBox(3, 671.0, 407.0, 250.0, 46.0);
+	
+	CreateBox(4, 308.0, 499.0, 250.0, 46.0);
+	CreateBox(5, 671.0, 499.0, 250.0, 46.0);
+	
+	CreateBox(6, 206.0, 407.0, 102.0, 46.0);
+	CreateBox(7, 921.0, 407.0, 102.0, 46.0);
+	
+	SetCursorArea(1024.0, 768.0);
+	
+	MenuOpen = True;
+	
+	/*ACS_NamedExecute("HVB_Menu_BG", 0, 0, 0, 0);
+	ACS_NamedExecute("HVB_Menu_Cursor", 0, 0, 0, 0);*/
+	
+	while(MenuOpen)
+	{
+		HudResetState();
+		HudSetVirtualSize(1024.0, 768.0);
+		if(MenuPage == 1)
+		{
+			if(KeyPressed(BT_ALTATTACK))
+			{
+				MenuOpen = False;
+				break;
+			}
+			else if(RectIsClicked(0, BT_ATTACK))
+			{
+				RectsDelete(-1);
+				for(let int i = 200; i <= 220;i++)
+				{
+					HudDrawText(i, "");
+				}
+				ACS_NamedExecute("HVB_Menu_Bonus", 0, 0, 0, 0);
+				terminate;
+			}
+			else if(RectIsClicked(1, BT_ATTACK))
+			{
+				RectsDelete(-1);
+				ACS_NamedExecute("HVB_Menu_Loadout", 0, 0, 0, 0);
+				break;
+			}
+			else if(RectIsClicked(2, BT_ATTACK))
+			{
+				RectsDelete(-1);
+				ACS_NamedExecute("HVB_Menu_Bag", 0, 0, 0, 0);
+				break;
+			}
+			else if(RectIsClicked(3, BT_ATTACK))
+			{
+				RectsDelete(-1);
+				ACS_NamedExecute("HVB_Menu_Skill", 0, 0, 0, 0);
+				break;
+			}
+			else if(RectIsClicked(4, BT_ATTACK))
+			{
+				RectsDelete(-1);
+				ACS_NamedExecute("HVB_Menu_Shop", 0, 0, 0, 0);
+				break;
+			}
+			else if(RectIsClicked(5, BT_ATTACK))
+			{
+				RectsDelete(-1);
+				ACS_NamedExecute("HVB_Menu_Upgrade", 0, 0, 0, 0);
+				break;
+			}
+			else if(RectIsClicked(6, BT_ATTACK))
+			{
+				MenuPage -= 1;
+			}
+			else if(RectIsClicked(7, BT_ATTACK))
+			{
+				MenuPage += 1;
+			}
+		}
+		
+			
+			HudSetScale(3.0);
+			
+			if(MenuPage == 1)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Bonus");
+				else
+					HudDrawText(200, "\cdBonus");
+				
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Load Out");
+				else
+					HudDrawText(201, "\cdLoad Out");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Bag");
+				else
+					HudDrawText(202, "\cdBag");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				if(RectIsHovered(3))
+					HudDrawText(203, "\c[Z3]Skill");
+				else
+					HudDrawText(203, "\cdSkill");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				if(RectIsHovered(4))
+					HudDrawText(204, "\c[Z3]Shop");
+				else
+					HudDrawText(204, "\cdShop");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				if(RectIsHovered(5))
+					HudDrawText(205, "\c[Z3]Upgrade");
+				else
+					HudDrawText(205, "\cdUpgrade");
+				
+				/*HudSetPoint(TextBoxX[6][BOX_X], TextBoxY[6][BOX_Y]);
+				if(RectIsHovered(6))
+					HudDrawText(206, "\c[Z3]<");
+				else
+					HudDrawText(206, "\cd<");*/
+					
+				HudSetPoint(TextBoxX[7][BOX_X], TextBoxY[7][BOX_Y]);
+				if(RectIsHovered(7))
+					HudDrawText(207, "\c[Z3]>");
+				else
+					HudDrawText(207, "\cd>");
+			}
+			/*else if(MenuState == 1)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Login Reward");
+				else
+					HudDrawText(200, "\cdLogin Reward");
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Time Reward");
+				else
+					HudDrawText(201, "\cdTime Reward");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Level Reward");
+				else
+					HudDrawText(202, "\cdLevel Reward");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				HudDrawText(203, "\cdWip");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				HudDrawText(204, "\cdWip");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+			}
+			else if(MenuState == 2)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Auto Select");
+				else
+					HudDrawText(200, "\cdAuto Select");
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Normal Weapons");
+				else
+					HudDrawText(201, "\cdNormal Weapons");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Melee Weapons");
+				else
+					HudDrawText(202, "\cdMelee Weapons");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				if(RectIsHovered(3))
+					HudDrawText(203, "\c[Z3]Special Weapons");
+				else
+					HudDrawText(203, "\cdSpecial Weapons");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				if(RectIsHovered(4))
+					HudDrawText(204, "\c[Z3]Legendary Weapons");
+				else
+					HudDrawText(204, "\cdLegendary Weapons");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				if(RectIsHovered(5))
+					HudDrawText(205, "\c[Z3]Artifact");
+				else
+					HudDrawText(205, "\cdArtifact");
+			}
+			else if(MenuState == 3)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Bonus");
+				else
+					HudDrawText(200, "\cdBonus");
+				
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Load Out");
+				else
+					HudDrawText(201, "\cdLoad Out");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Bag");
+				else
+					HudDrawText(202, "\cdBag");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				if(RectIsHovered(3))
+					HudDrawText(203, "\c[Z3]Skill");
+				else
+					HudDrawText(203, "\cdSkill");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				if(RectIsHovered(4))
+					HudDrawText(204, "\c[Z3]Shop");
+				else
+					HudDrawText(204, "\cdShop");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				if(RectIsHovered(5))
+					HudDrawText(205, "\c[Z3]Upgrade");
+				else
+					HudDrawText(205, "\cdUpgrade");
+				
+				HudSetPoint(TextBoxX[6][BOX_X], TextBoxY[6][BOX_Y]);
+				if(RectIsHovered(6))
+					HudDrawText(206, "\c[Z3]<");
+				else
+					HudDrawText(206, "\cd<");
+					
+				HudSetPoint(TextBoxX[7][BOX_X], TextBoxY[7][BOX_Y]);
+				if(RectIsHovered(7))
+					HudDrawText(207, "\c[Z3]>");
+				else
+					HudDrawText(207, "\cd>");
+			}
+			else if(MenuState == 4)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Base Skill");
+				else
+					HudDrawText(200, "\cdBase Skill");
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Role Skill");
+				else
+					HudDrawText(201, "\cdRole Skill");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Job Skill");
+				else
+					HudDrawText(202, "\cdJob Skill");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				if(RectIsHovered(3))
+					HudDrawText(203, "\c[Z3]???");
+				else
+					HudDrawText(203, "\cd???");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				HudDrawText(204, "\cdWip");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+			}
+			else if(MenuState == 5)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Items");
+				else
+					HudDrawText(200, "\cdItems");
+				
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Weapons");
+				else
+					HudDrawText(201, "\cdWeapons");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Characters");
+				else
+					HudDrawText(202, "\cdCharacters");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				if(RectIsHovered(3))
+					HudDrawText(203, "\c[Z3]???");
+				else
+					HudDrawText(203, "\cd???");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				HudDrawText(204, "\cdWip");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+			}
+			else if(MenuState == 6)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Weapon Upgrade");
+				else
+					HudDrawText(200, "\cdWeapon Upgrade");
+				
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Character Upgrade");
+				else
+					HudDrawText(201, "\cdCharacter Upgrade");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				if(RectIsHovered(2))
+					HudDrawText(202, "\c[Z3]Boss Upgrade");
+				else
+					HudDrawText(202, "\cdBoss Upgrade");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				HudDrawText(204, "\cdWip");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				HudDrawText(204, "\cdWip");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+			}*/
+			else if(MenuPage == 2)
+			{
+				HudSetPoint(TextBoxX[0][BOX_X], TextBoxY[0][BOX_Y]);
+				if(RectIsHovered(0))
+					HudDrawText(200, "\c[Z3]Mission (Wip)");
+				else
+					HudDrawText(200, "\cdMission (Wip)");
+				
+				HudSetPoint(TextBoxX[1][BOX_X], TextBoxY[1][BOX_Y]);
+				if(RectIsHovered(1))
+					HudDrawText(201, "\c[Z3]Query");
+				else
+					HudDrawText(201, "\cdQuery");
+				
+				HudSetPoint(TextBoxX[2][BOX_X], TextBoxY[2][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+				
+				HudSetPoint(TextBoxX[3][BOX_X], TextBoxY[3][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+				
+				HudSetPoint(TextBoxX[4][BOX_X], TextBoxY[4][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+				
+				HudSetPoint(TextBoxX[5][BOX_X], TextBoxY[5][BOX_Y]);
+				HudDrawText(205, "\cdWip");
+				
+				HudSetPoint(TextBoxX[6][BOX_X], TextBoxY[6][BOX_Y]);
+				if(RectIsHovered(6))
+					HudDrawText(206, "\c[Z3]<");
+				else
+					HudDrawText(206, "\cd<");
+			
+		}
+		
+		Delay(1);
+	}
+	RectsDelete(-1);
+	for(let int i = 200; i <= 220;i++)
+	{
+		HudDrawText(i, "");
+	}
+}
+

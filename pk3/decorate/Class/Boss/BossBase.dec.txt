@@ -1,0 +1,55 @@
+ACTOR BaseBoss : PlayerPawn
+{
+	Species "Boss"
+	+THRUSPECIES
+	+DONTHARMSPECIES
+	+NOICEDEATH
+	+NOSKIN
+	+NOBLOOD
+	+DONTRIP
+}
+
+Actor BaseArm : DoomWeapon
+{
+	+INVENTORY.UNDROPPABLE
+	+WEAPON.AMMO_OPTIONAL
+	+WEAPON.ALT_AMMO_OPTIONAL
+	//+WEAPON.CHEATNOTWEAPON
+	//Weapon.SelectionOrder 1
+	States
+	{
+		Spawn:
+			TNT1 A 0 
+			Stop
+		Ready:
+			HAND A 1 A_WeaponReady
+			Goto Ready
+		Select:
+			HAND A 1 A_Raise
+			Loop
+		Deselect:
+			HAND A 1 A_Lower
+			Loop
+		Fire:
+			HANS A 1
+			Goto Ready
+	}
+}
+
+Actor BossMeleePuff : BulletPuff
+{
+}
+
+Actor BaseBossSkill : CustomInventory
+{
+	+INVENTORY.UNDROPPABLE
+	Inventory.MaxAmount 1
+	States
+	{
+		Spawn:
+		Pickup:
+		Use:
+			TNT1 A 0
+			Stop
+	}
+}
